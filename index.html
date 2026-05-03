@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Secure Password</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Inter', sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #f0f4f8 0%, #d9e2ec 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .register-card {
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.2);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #1e2f3e;
+        }
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+            color: #2c3e50;
+        }
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #2c7da0;
+            box-shadow: 0 0 0 3px rgba(44,125,160,0.2);
+        }
+        button {
+            width: 100%;
+            background: #2c7da0;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-weight: 600;
+            border-radius: 2rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #1f5e7a;
+            transform: scale(0.98);
+        }
+        .error-msg {
+            color: #d9534f;
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+        }
+        .success-msg {
+            color: #2c7da0;
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+        .rule-list {
+            background: #f8fafc;
+            padding: 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+        .rule-list p {
+            margin: 0.3rem 0;
+        }
+    </style>
+</head>
+<body>
+<div class="register-card">
+    <h2>🔐 Create Account</h2>
+    <form id="registerForm">
+        <div class="input-group">
+            <label>👤 Username</label>
+            <input type="text" id="username" placeholder="e.g., johndoe" required>
+        </div>
+        <div class="input-group">
+            <label>🔒 Password</label>
+            <input type="password" id="password" placeholder="Create strong password" required>
+            <div id="passwordError" class="error-msg"></div>
+        </div>
+        <div class="rule-list">
+            <p>✅ Password must:</p>
+            <p>• Be at least 8 characters long</p>
+            <p>• NOT consist only of integers</p>
+            <p>• Contain BOTH uppercase and lowercase letters</p>
+        </div>
+        <button type="submit">Register</button>
+        <div id="resultMsg" class="success-msg"></div>
+    </form>
+</div>
+
+<script>
+    const passwordInput = document.getElementById('password');
+    const passwordError = document.getElementById('passwordError');
+    const registerForm = document.getElementById('registerForm');
+    const resultMsg = document.getElementById('resultMsg');
+
+    // Validation function
+    function validatePassword(password) {
+        // 1. length >= 8
+        if (password.length < 8) {
+            return { valid: false, message: '❌ Password must be at least 8 characters long.' };
+        }
+        // 2. not only integers (check if every character is a digit)
+        if (/^\d+$/.test(password)) {
+            return { valid: false, message: '❌ Password cannot consist only of numbers.' };
+        }
+        // 3. must contain at least one uppercase AND one lowercase letter
+        if (!/[A-Z]/.test(password) || !/[a-z]/.test(password)) {
+            return { valid: false, message: '❌ Password must contain both uppercase and lowercase letters.' };
+        }
+        return { valid: true, message: '✅ Strong password!' };
+    }
+
+    // Real-time feedback
+    passwordInput.addEventListener('input', function() {
+        const result = validatePassword(this.value);
+        if (this.value === '') {
+            passwordError.textContent = '';
+            return;
+        }
+        if (!result.valid) {
+            passwordError.textContent = result.message;
+            passwordError.style.color = '#d9534f';
+        } else {
+            passwordError.textContent = '✔️ Password meets all requirements';
+            passwordError.style.color = '#2c7da0';
+        }
+    });
+
+    // Form submission
+    registerForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value.trim();
+        const password = passwordInput.value;
+
+        if (username === '') {
+            resultMsg.textContent = '❌ Please enter a username.';
+            resultMsg.style.color = '#d9534f';
+            return;
+        }
+
+        const validation = validatePassword(password);
+        if (!validation.valid) {
+            resultMsg.textContent = validation.message;
+            resultMsg.style.color = '#d9534f';
+        } else {
+            resultMsg.textContent = `✅ Registration successful! Welcome, ${username}.`;
+            resultMsg.style.color = '#2c7da0';
+            // Optionally clear form
+            // document.getElementById('username').value = '';
+            // passwordInput.value = '';
+            // passwordError.textContent = '';
+        }
+    });
+</script>
+</body>
+</html>
